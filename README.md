@@ -19,10 +19,10 @@ Laminar uses a **Single-Writer Ring Buffer** pattern to serialize concurrent wri
 
 ```mermaid
 graph LR
-    User[Virtual Threads] --> |Propose| Queue [Concurrent Queue]
-    Queue                 --> |Batch| Pumper [Log Appender]
-    Pumper                --> |Write| PageCache [OS Page Cache]
-    PageCache             --> |Fsync| SSD [NVMe SSD]
+    User[Virtual Threads] --> |Propose| Queue[Concurrent Queue]
+    Queue --> |Batch| Pumper[Log Appender]
+    Pumper --> |Write| PageCache[OS Page Cache]
+    PageCache --> |Fsync| SSD[NVMe SSD]
 
 ```
 
