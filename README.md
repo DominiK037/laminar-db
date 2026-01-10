@@ -17,13 +17,24 @@
 
 Laminar uses a **Single-Writer Ring Buffer** pattern to serialize concurrent writes into a linear log.
 
-```mermaid
-graph LR
-    User[Virtual Threads] --> |Propose| Queue [Concurrent Queue]
-    Queue --> |Batch| Pumper [Log Appender]
-    Pumper --> |Write| PageCache [OS Page Cache]
-    PageCache --> |Fsync| SSD [NVMe SSD]
-
+```text
++-------------+       +------------------+       +--------------+
+| Virtual     |       | Concurrent       |       | Log          |
+| Threads     | ----> | Queue            | ----> | Appender     |
++-------------+       +------------------+       +--------------+
+   (Propose)               (Batch)                      |
+                                                        | (Write)
+                                                        v
+                                                 +--------------+
+                                                 | OS Page      |
+                                                 | Cache        |
+                                                 +--------------+
+                                                        |
+                                                        | (Fsync)
+                                                        v
+                                                  +-----------+
+                                                  | NVMe SSD  |
+                                                  +-----------+
 ```
 
 ## Modules
