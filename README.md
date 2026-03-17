@@ -2,7 +2,7 @@
 
 > A from-scratch, embedded key-value storage engine built on the principles of **I don't like Black Boxes** — aligning software design with how hardware actually behaves.
 
-[![Build Status](https://img.shields.io/badge/build-passing-brightgreen)](https://github.com/DominiK037/laminar-db)
+[![CI](https://img.shields.io/badge/ci-success-green)](https://github.com/DominiK037/laminar-db/actions/workflows/ci.yml)
 [![Java](https://img.shields.io/badge/Java-21-orange)](https://openjdk.org/projects/jdk/21/)
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 [![Status](https://img.shields.io/badge/status-active--development-yellow)](https://github.com/DominiK037/laminar-db/projects)
