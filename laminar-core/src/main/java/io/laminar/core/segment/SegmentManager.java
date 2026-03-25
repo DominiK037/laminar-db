@@ -2,6 +2,7 @@ package io.laminar.core.segment;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Comparator;
@@ -30,7 +31,7 @@ import java.util.stream.Collectors;
  * up to ~1 billion segments (~40 years at sustained write rate for 500 bytes/write on average).
  * Decimal over hexadecimal — human readable without mental conversion.
  */
-final class SegmentManager implements Closeable {
+public final class SegmentManager implements Closeable {
 
     /**
      * Filename format for segment files.
@@ -65,7 +66,7 @@ final class SegmentManager implements Closeable {
      * @throws IOException if the directory cannot be read or a segment
      *                     file cannot be opened
      */
-    SegmentManager(Path dataDirectory) throws IOException {
+    public SegmentManager(Path dataDirectory) throws IOException {
         this.dataDirectory = dataDirectory;
         Files.createDirectories(dataDirectory);
         recover();
@@ -192,6 +193,35 @@ final class SegmentManager implements Closeable {
                 "'data-NNNNNNNNN.log': " + filename
             );
         }
+    }
+
+    /**
+     * Rotates if full, then appends {@code buffer} to the active segment.
+     *
+     * <p>Combines rotation and append into one call so {@link io.laminar.core.append.LogAppender}
+     * does not need direct access to {@link WALSegment}, which is package-private.
+     *
+     * @param buffer serialized record in read mode — must be flipped before calling
+     * @return byte offset where this record starts in the active segment file
+     * @throws IOException if rotation or the append fails
+     */
+    public long append(ByteBuffer buffer) throws IOException {
+        rotateIfFull();
+        return activeSegment.append(buffer);
+    }
+
+    /**
+     * Flushes the active segment to durable storage ({@code fdatasync}).
+     *
+     * <p>Called by {@link io.laminar.core.append.LogAppender} on the group commit
+     * schedule — every {@link io.laminar.core.config.WALConfig#FLUSH_INTERVAL_MS} ms
+     * or every {@link io.laminar.core.config.WALConfig#FLUSH_BUFFER_SIZE_BYTES} bytes,
+     * whichever comes first.
+     *
+     * @throws IOException if the flush fails
+     */
+    public void flush() throws IOException {
+        activeSegment.flush();
     }
 
     /**
