@@ -1,5 +1,7 @@
 package io.laminar.core.segment;
 
+import io.laminar.core.config.WALConfig;
+
 import java.io.Closeable;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -183,8 +185,8 @@ public final class SegmentManager implements Closeable {
         String filename = path.getFileName().toString();
         // Strip "data-" prefix and ".log" suffix, parse the padded number
         String numberPart = filename
-                .replace("data-", "")
-                .replace(WALSegment.EXTENSION, "");
+                .replace(WALConfig.SEGMENT_FILENAME_PREFIX, "")
+                .replace(WALConfig.SEGMENT_FILE_EXTENSION, "");
         try {
             return Integer.parseInt(numberPart);
         } catch (NumberFormatException e) {

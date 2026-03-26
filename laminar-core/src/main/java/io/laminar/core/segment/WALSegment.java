@@ -44,7 +44,7 @@ final class WALSegment implements Closeable {
     private static final int MAX_WRITE_STALLS = 3;
 
     /** File extension for all WAL segment files — e.g. {@code data-003.log}. */
-    static final String EXTENSION = ".log";
+    static final String EXTENSION = WALConfig.SEGMENT_FILE_EXTENSION;
 
     /** Full path of this segment file — e.g. {@code /var/laminar/data/data-003.log}. */
     private final Path path;
