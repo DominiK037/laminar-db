@@ -115,6 +115,29 @@ public final class WALConfig {
     public static final int OFFSET_VAL_SIZE  = 28;
 
     // -------------------------------------------------------------------------
+    // Segment File Naming
+    // These constants define the on-disk filename contract shared by
+    // SegmentManager (writer) and WalRecovery (reader).
+    // -------------------------------------------------------------------------
+
+    /**
+     * File extension for all WAL segment files.
+     *
+     * <p>Used by {@code SegmentManager} when creating files and by
+     * {@code WalRecovery} when scanning the data directory.
+     */
+    public static final String SEGMENT_FILE_EXTENSION  = ".log";
+
+    /**
+     * Filename prefix for all WAL segment files.
+     *
+     * <p>Combined with a zero-padded sequence number to form names like
+     * {@code data-000000001.log}. Alphabetical sort equals numerical sort
+     * because of the zero-padding, which guarantees correct replay order.
+     */
+    public static final String SEGMENT_FILENAME_PREFIX = "data-";
+
+    // -------------------------------------------------------------------------
     // Record Type Markers
     // -------------------------------------------------------------------------
 
